@@ -1,10 +1,13 @@
 use std::process::Command;
 
+use lazy_regex::regex;
+
 use crate::{command_lines, Result};
 
 const BSPC: &str = "bspc";
 const WATCH_MONITOR_ARGS: [&str; 2] = ["subscribe", "monitor"];
-const GET_MONITOR_ARGS: [&str; 3] = ["query", "--monitors", "--names"];
+const XRANDR: &str = "xrandr";
+const GET_MONITOR_ARGS: [&str; 1] = ["--listactivemonitors"];
 
 pub fn watch() -> Result<()> {
     // Print initial
@@ -20,9 +23,16 @@ pub fn watch() -> Result<()> {
 }
 
 fn print_monitors() -> Result<()> {
-    let cmd = Command::new(BSPC).args(GET_MONITOR_ARGS).output()?;
+    let cmd = Command::new(XRANDR).args(GET_MONITOR_ARGS).output()?;
     let stdout = String::from_utf8(cmd.stdout)?;
-    let monitors: Vec<&str> = stdout.lines().collect();
+    let regex = regex!(r"[0-9]+: \+([^ ]+) ");
+    let monitors: Vec<&str> = regex
+        .captures_iter(&stdout)
+        .map(|x| x.get(1))
+        .filter(|x| x.is_some())
+        .map(|x| x.expect("This list should have filtered out None!"))
+        .map(|x| x.as_str())
+        .collect();
     let json = serde_json::to_string(&monitors)?;
     println!("{}", &json);
     Ok(())
