@@ -25,7 +25,7 @@ pub fn watch() -> Result<()> {
 fn print_monitors() -> Result<()> {
     let cmd = Command::new(XRANDR).args(GET_MONITOR_ARGS).output()?;
     let stdout = String::from_utf8(cmd.stdout)?;
-    let regex = regex!(r"[0-9]+: \+([^ ]+) ");
+    let regex = regex!(r"[0-9]+: \+\*?([^ ]+) ");
     let monitors: Vec<&str> = regex
         .captures_iter(&stdout)
         .map(|x| x.get(1))
