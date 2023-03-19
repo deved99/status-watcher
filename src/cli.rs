@@ -16,13 +16,15 @@ impl Cli {
 
 #[derive(Debug, PartialEq, Eq)]
 enum Commands {
-    Volume
+    Volume,
+    Monitor
 }
 
 impl Commands {
     pub fn run(&self) -> Result<()> {
         match self {
             Self::Volume => actions::volume::watch(),
+            Self::Monitor => actions::monitor::watch(),
         }
     }
 }
@@ -33,6 +35,7 @@ impl std::str::FromStr for Commands {
     fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
         match s {
             "volume" => Ok(Self::Volume),
+            "monitor" => Ok(Self::Monitor),
             _ => Err(Error::InvalidCommand(s.to_string()))
         }
     }
