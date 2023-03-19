@@ -1,4 +1,4 @@
-use crate::{actions, Result, Error};
+use crate::{actions, Error, Result};
 use argh::FromArgs;
 
 #[derive(FromArgs, PartialEq, Debug)]
@@ -16,15 +16,17 @@ impl Cli {
 
 #[derive(Debug, PartialEq, Eq)]
 enum Commands {
+    Desktop,
+    Monitor,
     Volume,
-    Monitor
 }
 
 impl Commands {
     pub fn run(&self) -> Result<()> {
         match self {
-            Self::Volume => actions::volume::watch(),
+            Self::Desktop => actions::desktop::watch(),
             Self::Monitor => actions::monitor::watch(),
+            Self::Volume => actions::volume::watch(),
         }
     }
 }
@@ -34,9 +36,10 @@ impl std::str::FromStr for Commands {
 
     fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
         match s {
-            "volume" => Ok(Self::Volume),
+            "desktop" => Ok(Self::Desktop),
             "monitor" => Ok(Self::Monitor),
-            _ => Err(Error::InvalidCommand(s.to_string()))
+            "volume" => Ok(Self::Volume),
+            _ => Err(Error::InvalidCommand(s.to_string())),
         }
     }
 }
