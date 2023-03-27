@@ -18,6 +18,7 @@ impl Cli {
 enum Commands {
     Desktop,
     Monitor,
+    Notif,
     Volume,
 }
 
@@ -26,6 +27,7 @@ impl Commands {
         match self {
             Self::Desktop => actions::desktop::watch(),
             Self::Monitor => actions::monitor::watch(),
+            Self::Notif => actions::notif::watch(),
             Self::Volume => actions::volume::watch(),
         }
     }
@@ -39,6 +41,7 @@ impl std::str::FromStr for Commands {
             "desktop" => Ok(Self::Desktop),
             "monitor" => Ok(Self::Monitor),
             "volume" => Ok(Self::Volume),
+            "notif" => Ok(Self::Notif),
             _ => Err(Error::InvalidCommand(s.to_string())),
         }
     }
