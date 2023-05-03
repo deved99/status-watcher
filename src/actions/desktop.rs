@@ -3,7 +3,7 @@ use std::process::Command;
 use crate::{command_lines, Error, Result};
 
 const BSPC: &str = "bspc";
-const WATCH_DESKTOP_ARGS: [&str; 2] = ["subscribe", "desktop"];
+const WATCH_DESKTOP_ARGS: [&str; 3] = ["subscribe", "node", "desktop"];
 
 pub fn watch() -> Result<()> {
     // Print initial
