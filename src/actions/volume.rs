@@ -9,7 +9,7 @@ const GET_VOLUME_ARGS: [&str; 2] = ["get-sink-volume", "@DEFAULT_SINK@"];
 const GET_MUTE_ARGS: [&str; 2] = ["get-sink-mute", "@DEFAULT_SINK@"];
 const GET_MIC_VOLUME_ARGS: [&str; 2] = ["get-source-volume", "@DEFAULT_SOURCE@"];
 const GET_MIC_MUTE_ARGS: [&str; 2] = ["get-source-mute", "@DEFAULT_SOURCE@"];
-#[derive(Serialize)]
+#[derive(Serialize, PartialEq)]
 struct Status {
     volume: usize,
     mute: bool,
@@ -27,9 +27,8 @@ impl Status {
         Ok(Self { volume, mute, mic_volume, mic_mute })
     }
 
-    fn print() -> Result<()> {
-        let status = Self::new()?;
-        let json = serde_json::to_string(&status)?;
+    fn print(&self) -> Result<()> {
+        let json = serde_json::to_string(self)?;
         println!("{}", json);
         Ok(())
     }
@@ -73,12 +72,17 @@ fn extract_mute_from_pactl(args: [&str; 2]) -> Result<bool> {
 
 pub fn watch() -> Result<()> {
     // Print initial
-    Status::print()?;
+    let mut status = Status::new()?;
+    status.print()?;
     let iter = command_lines("pactl", &["subscribe"])?;
     for line in iter {
         let line = line?;
-        if line.contains("'change' on source") {
-            Status::print()?;
+        if line.contains("'change' on") {
+            let status_new = Status::new()?;
+            if status != status_new {
+                status = status_new;
+                status.print()?;
+            }
         }
     }
     Ok(())
