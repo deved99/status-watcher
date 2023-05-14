@@ -29,9 +29,7 @@ fn print_monitors() -> Result<()> {
     let monitors: Vec<&str> = regex
         .captures_iter(&stdout)
         .map(|x| x.get(1))
-        .filter(|x| x.is_some())
-        .map(|x| x.expect("This list should have filtered out None!"))
-        .map(|x| x.as_str())
+        .filter_map(|x| x.map(|s| s.as_str()))
         .collect();
     let json = serde_json::to_string(&monitors)?;
     println!("{}", &json);

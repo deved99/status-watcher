@@ -23,9 +23,8 @@ impl Status {
         let volumes: Vec<usize> = regex
             .captures_iter(&stdout)
             .map(|x| x.get(1))
-            .filter(|x| x.is_some())
-            .map(|x| x.expect("This list should have filtered out None!"))
-            .map(|x| x.as_str().parse())
+            .filter_map(|x| x.map(|p| p.as_str()))
+            .map(|x| x.parse())
             .map(|x| x.expect("The first capture group of the regex is an integer, right?"))
             .collect();
         let volume = volumes.iter().sum::<usize>() / volumes.len();
