@@ -10,7 +10,7 @@ pub fn watch() -> Result<()> {
     print_desktops()?;
     let iter = command_lines(BSPC, &WATCH_DESKTOP_ARGS)?
         .flat_map(|s| s.ok())
-        .filter(|s| s.starts_with("node_stack") || s.starts_with("desktop_focus"));
+        .filter(|s| s.starts_with("node_transfer") || s.starts_with("desktop_focus"));
     for _ in iter {
         print_desktops()?
     }
